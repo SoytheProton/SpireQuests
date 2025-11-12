@@ -1,8 +1,11 @@
 package spireQuests.quests;
 
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.localization.UIStrings;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
 import spireQuests.Anniv8Mod;
 
 import java.lang.reflect.InvocationTargetException;
@@ -52,6 +55,8 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     public int goldCost;
     public boolean usingGoldCost;
 
+    public ArrayList<PowerTip> stuffToPreview;
+
     /*
     examples of how trackers would be added in the constructor of a quest
     addTracker(new PassiveTracker<>(() -> AbstractDungeon.player.currentHealth, 1));
@@ -84,6 +89,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         trackers = new ArrayList<>();
         triggers = new ArrayList<>();
+        stuffToPreview = new ArrayList<>();
 
         localization = CardCrawlGame.languagePack.getUIString(id);
         if (localization == null) {

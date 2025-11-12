@@ -1,9 +1,14 @@
 package spireQuests.quests.example;
 
+import basemod.helpers.CardPowerTip;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.DamageInfo;
+import com.megacrit.cardcrawl.cards.red.Bash;
 import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.PowerTip;
+import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.relics.Boot;
 import com.megacrit.cardcrawl.relics.BurningBlood;
 import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
@@ -36,5 +41,10 @@ public class TestQuest extends AbstractQuest {
 
         addReward(new QuestReward.GoldReward(100));
         addReward(new QuestReward.RelicReward(new BurningBlood()));
+
+        AbstractRelic boot = new Boot();
+        stuffToPreview.add(new CardPowerTip(new Bash()));
+        stuffToPreview.add(new CardPowerTip(new Bash()));
+        stuffToPreview.add(new PowerTip(boot.name, boot.description));
     }
 }

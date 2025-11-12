@@ -6,9 +6,7 @@ import com.megacrit.cardcrawl.cards.DamageInfo;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
-import com.megacrit.cardcrawl.helpers.FontHelper;
-import com.megacrit.cardcrawl.helpers.Hitbox;
-import com.megacrit.cardcrawl.helpers.ImageMaster;
+import com.megacrit.cardcrawl.helpers.*;
 import com.megacrit.cardcrawl.helpers.controller.CInputActionSet;
 import com.megacrit.cardcrawl.helpers.input.InputHelper;
 import spireQuests.Anniv8Mod;
@@ -24,7 +22,8 @@ public class QuestBoardQuest {
     public AbstractQuest quest;
     private final float x;
     private final float y;
-    private final Hitbox hb;
+    private final Hitbox hb; // hitbox for the pickup button
+    private final Hitbox previewHb; // hitbox for showing the previews on hover
     public boolean taken;
     protected Color lockAlpha = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -33,6 +32,7 @@ public class QuestBoardQuest {
         this.x = x;
         this.y = y;
         this.hb = new Hitbox(300.0F * Settings.xScale, 64.0F * Settings.yScale);
+        this.previewHb = new Hitbox(512.0F * Settings.xScale, 716.0F * Settings.yScale);
     }
 
     public void render(SpriteBatch sb, float boardY) {
@@ -42,6 +42,7 @@ public class QuestBoardQuest {
             sb.draw(ImageMaster.VICTORY_BANNER, this.x - 50.0F * Settings.xScale, this.y + 199.0F * Settings.yScale + boardY, 612.0F * Settings.xScale, 238.0F * Settings.yScale);
             FontHelper.renderFontCentered(sb, FontHelper.losePowerFont, this.quest.name, this.x + 260.0F * Settings.xScale, this.y + 340.0F * Settings.yScale + boardY, Color.WHITE, 1.2f);
             this.hb.move(this.x + 5.0F * Settings.xScale + (512.0F / 2) * Settings.xScale, this.y - 445.0F * Settings.yScale + boardY + (256.0F / 2) * Settings.yScale);
+            this.previewHb.move(this.x + (512.0F / 2) * Settings.xScale, this.y - 350.0F * Settings.yScale + boardY + (716.0F / 2) * Settings.yScale);
             if (QuestBoardScreen.parentProp.numQuestsPickable <= 0) {
                 sb.setColor(Color.GRAY.cpy());
             } else if (this.hb.hovered) {
@@ -54,6 +55,23 @@ public class QuestBoardQuest {
             FontHelper.renderFontLeft(sb, FontHelper.cardDescFont_N, quest.getRewardsText(), this.x + 55.0F * Settings.xScale, this.y - 60.0F * Settings.yScale + boardY, Color.WHITE);
             if (Anniv8Mod.questsHaveCost()) {
                 renderPrice(sb, boardY);
+            }
+            if (this.previewHb.hovered) {
+                renderPreviews(boardY);
+            }
+        }
+    }
+
+    public void renderPreviews(float boardY) {
+        float TIP_X_THRESHOLD = 1544.0F * Settings.xScale;
+        float TIP_OFFSET_R_X = 20.0F * Settings.xScale;
+        float TIP_OFFSET_L_X = -380.0F * Settings.xScale;
+
+        if (!quest.stuffToPreview.isEmpty()) {
+            if (this.previewHb.cX + this.previewHb.width / 2.0F < TIP_X_THRESHOLD) {
+                TipHelper.queuePowerTips(this.previewHb.cX + this.previewHb.width / 2.0F + TIP_OFFSET_R_X, this.previewHb.cY + TipHelper.calculateAdditionalOffset(quest.stuffToPreview, this.previewHb.cY) + boardY, quest.stuffToPreview);
+            } else {
+                TipHelper.queuePowerTips(this.previewHb.cX - this.previewHb.width / 2.0F + TIP_OFFSET_L_X, this.previewHb.cY + TipHelper.calculateAdditionalOffset(quest.stuffToPreview, this.previewHb.cY) + boardY, quest.stuffToPreview);
             }
         }
     }
@@ -87,6 +105,7 @@ public class QuestBoardQuest {
     public void update() {
         if (!taken) {
             this.hb.update();
+            this.previewHb.update();
             if (QuestBoardScreen.parentProp.numQuestsPickable > 0) {
                 if (this.hb.justHovered) {
                     CardCrawlGame.sound.playV("UI_HOVER", 0.75F);
