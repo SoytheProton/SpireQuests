@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static spireQuests.util.CompatUtil.CARDISTRY_ID;
+import static spireQuests.util.CompatUtil.SNAPSHOT_ID;
 
 public class BasicProficiencyQuest extends AbstractQuest {
     public static final Color TITLE_PURPLE = new Color(183/255f, 95/255f, 245/255f, 1);
@@ -31,6 +32,7 @@ public class BasicProficiencyQuest extends AbstractQuest {
         CHAR_MAP.put("DEFECT", Arrays.asList(Dualcast.ID, TripleCast.ID));
         CHAR_MAP.put("WATCHER", Arrays.asList(Vigilance.ID, Balance.ID));
         CHAR_MAP.put("THE_PACKMASTER", Arrays.asList(CARDISTRY_ID, Cardmancy.ID));
+        CHAR_MAP.put("HERMIT", Arrays.asList(SNAPSHOT_ID, Trapshot.ID));
     }
     private String cardToPlayId = Madness.ID;
     private String rewardCardId = Madness.ID;

@@ -18,5 +18,9 @@
   "${ModID}:Balance": {
     "NAME": "Balance",
     "DESCRIPTION": "Gain !B! Block. NL Enter Calm."
+  },
+  "${ModID}:Trapshot": {
+    "NAME": "Trapshot",
+    "DESCRIPTION": "Deal !D! damage. hermit:Dead_On: The target loses Strength this turn equal to unblocked damage dealt."
   }
 }
