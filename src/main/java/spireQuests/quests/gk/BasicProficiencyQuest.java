@@ -1,12 +1,12 @@
 package spireQuests.quests.gk;
 
 import com.badlogic.gdx.graphics.Color;
+import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.blue.Dualcast;
 import com.megacrit.cardcrawl.cards.colorless.Madness;
 import com.megacrit.cardcrawl.cards.green.Survivor;
 import com.megacrit.cardcrawl.cards.purple.Vigilance;
 import com.megacrit.cardcrawl.cards.red.Bash;
-import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.helpers.CardLibrary;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import spireQuests.patches.QuestTriggers;
@@ -60,6 +60,7 @@ public class BasicProficiencyQuest extends AbstractQuest {
 
     @Override
     public String getDescription() {
-        return String.format(description, FontHelper.colorString(cardToPlayId, "y"));
+        AbstractCard card = CardLibrary.getCard(cardToPlayId);
+        return String.format(description, FontHelper.colorString(card.name, "y"));
     }
 }
