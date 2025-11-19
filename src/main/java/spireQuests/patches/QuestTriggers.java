@@ -47,11 +47,11 @@ public class QuestTriggers {
     @SpirePatch(
             clz = CardGroup.class,
             method = "removeCard",
-            paramtypez = { AbstractCard.class }
+            paramtypez = {AbstractCard.class}
     )
     public static class OnRemoveCard {
         @SpireInsertPatch(
-                rloc=2
+                rloc = 2
         )
         public static void OnRemove(CardGroup __instance, AbstractCard c) {
             if (disabled()) return;
@@ -80,7 +80,7 @@ public class QuestTriggers {
     @SpirePatch(
             clz = AbstractDungeon.class,
             method = "nextRoomTransition",
-            paramtypez = { SaveFile.class }
+            paramtypez = {SaveFile.class}
     )
     public static class OnEnterRoom {
         @SpireInsertPatch(
@@ -90,7 +90,7 @@ public class QuestTriggers {
             if (!disabled() && AbstractDungeon.currMapNode != null) {
                 LEAVE_ROOM.trigger(AbstractDungeon.currMapNode);
             }
-            
+
             if (!disabled() && AbstractDungeon.nextRoom != null) {
                 ENTER_ROOM.trigger(AbstractDungeon.nextRoom);
             }
@@ -108,7 +108,7 @@ public class QuestTriggers {
     @SpirePatch2(
             clz = UseCardAction.class,
             method = SpirePatch.CONSTRUCTOR,
-            paramtypez = { AbstractCard.class, AbstractCreature.class }
+            paramtypez = {AbstractCard.class, AbstractCreature.class}
     )
     public static class OnPlayCard {
         @SpirePostfixPatch
@@ -213,16 +213,18 @@ public class QuestTriggers {
             CHEST_OPENED.trigger(__instance);
     @SpirePatch2(clz= PotionPopUp.class, method = "updateInput")
     @SpirePatch2(clz= PotionPopUp.class, method = "updateTargetMode")
+    @SpirePatch2(clz = PotionPopUp.class, method = "updateInput")
+    @SpirePatch2(clz = PotionPopUp.class, method = "updateTargetMode")
     public static class PotionUse {
-        @SpireInsertPatch(locator = DestroyPotionLocator.class, localvars={"potion"})
+        @SpireInsertPatch(locator = DestroyPotionLocator.class, localvars = {"potion"})
         public static void generalPotionPatch(AbstractPotion potion) {
             USE_POTION.trigger(potion);
         }
     }
 
-    @SpirePatch(clz=AbstractPlayer.class, method="damage")
+    @SpirePatch(clz = AbstractPlayer.class, method = "damage")
     public static class FairyPotionUse {
-        @SpireInsertPatch(locator=DestroyPotionLocator.class, localvars={"p"})
+        @SpireInsertPatch(locator = DestroyPotionLocator.class, localvars = {"p"})
         public static void fairyPotPatch(AbstractPotion p) {
             USE_POTION.trigger(p);
         }
