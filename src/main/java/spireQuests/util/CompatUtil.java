@@ -29,5 +29,7 @@ public class CompatUtil {
         }
     }
 
+    public static boolean pmLoaded() {
+        return Loader.isModLoaded("anniv5");
     }
 }

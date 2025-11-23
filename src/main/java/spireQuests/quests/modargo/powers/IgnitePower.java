@@ -18,6 +18,8 @@ import spireQuests.util.Wiz;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import static spireQuests.util.CompatUtil.pmLoaded;
+
 public class IgnitePower extends AbstractSQPower implements HealthBarRenderPower {
     public static final String POWER_ID = Anniv8Mod.makeID(IgnitePower.class.getSimpleName());
     private static final PowerStrings powerStrings = CardCrawlGame.languagePack.getPowerStrings(POWER_ID);
@@ -63,7 +65,7 @@ public class IgnitePower extends AbstractSQPower implements HealthBarRenderPower
     private static Constructor<?> igniteConstructor = null;
 
     public static AbstractPower create(AbstractCreature owner, int amount) {
-        if (Loader.isModLoaded("anniv5")) {
+        if (pmLoaded()) {
             try {
                 if (igniteConstructor == null) {
                     igniteConstructor = Class.forName("thePackmaster.powers.shamanpack.IgnitePower").getConstructor(AbstractCreature.class, int.class);
