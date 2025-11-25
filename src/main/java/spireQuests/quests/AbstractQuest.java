@@ -48,6 +48,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
     public boolean useDefaultReward;
     public List<QuestReward> questRewards;
+    public boolean rewardScreenOnly = false;
 
     private int trackerTextIndex = 0;
 
@@ -767,7 +768,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
     /**
      * A tracker used to mark a quest as completed to avoid having the state change afterward
      */
-    private static class QuestCompleteTracker extends Tracker {
+    private class QuestCompleteTracker extends Tracker {
         public static final String COMPLETE_STRING = "COMPLETE";
 
         public QuestCompleteTracker() {
@@ -781,12 +782,12 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         @Override
         public String progressString() {
-            return TEXT[0];
+            return TEXT[rewardScreenOnly?1:0];
         }
 
         @Override
         public String toString() {
-            return TEXT[0];
+            return TEXT[rewardScreenOnly?1:0];
         }
 
         @Override
@@ -817,12 +818,12 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         @Override
         public String progressString() {
-            return TEXT[1];
+            return TEXT[2];
         }
 
         @Override
         public String toString() {
-            return TEXT[1];
+            return TEXT[2];
         }
 
         @Override
