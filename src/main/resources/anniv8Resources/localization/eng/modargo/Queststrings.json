@@ -64,7 +64,7 @@
   },
   "${ModID}:PlatinumCafeMemberQuest": {
     "TITLE": "Platinum Cafe Member",
-    "DESCRIPTION": "The Cafe is running a special! Customers who buy out the bartender\u0027s offerings and finish a conversation with each Cafe patron will receive a small gift.",
+    "DESCRIPTION": "The Cafe is running a special! Customers who buy out the bartender's offerings and finish a conversation with each Cafe patron will receive a small gift.",
     "AUTHOR": "modargo",
     "TRACKER_TEXT": [
       "Cafe entered",

@@ -15,15 +15,15 @@ public class QuestStringsUtils {
     private static final Map<String, QuestStrings> quests = new HashMap<>();
 
     public static void registerQuestStrings(String pathToFile) {
-        String filePath = pathToFile + File.separator + "QuestStrings.json";
+        String filePath = pathToFile + File.separator + "Queststrings.json";
         try {
             Gson gson = new Gson();
             String fileData = Gdx.files.internal(filePath).readString(String.valueOf(StandardCharsets.UTF_8));
             Type questsType = (new TypeToken<Map<String, QuestStrings>>(){}).getType();
             quests.putAll(gson.fromJson(fileData, questsType));
-            Anniv8Mod.logger.info("QuestStrings successfully loaded for: {}", pathToFile);
+            Anniv8Mod.logger.info("Queststrings successfully loaded for: {}", pathToFile);
         } catch (Exception e) {
-            Anniv8Mod.logger.error("QuestStrings could not be loaded: {}", e.getLocalizedMessage());
+            Anniv8Mod.logger.error("Queststrings could not be loaded: {}", e.getLocalizedMessage());
         }
     }
 

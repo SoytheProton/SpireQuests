@@ -92,7 +92,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         questStrings = QuestStringsUtils.getQuestString(id);
         if (questStrings == null) {
-            throw new RuntimeException("QuestStrings for the quest " + id + " not found!");
+            throw new RuntimeException("Queststrings for the quest " + id + " not found!");
         }
         setText();
     }
