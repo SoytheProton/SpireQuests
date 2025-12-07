@@ -19,6 +19,8 @@ import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.helpers.FontHelper;
 import com.megacrit.cardcrawl.localization.*;
+import com.megacrit.cardcrawl.monsters.AbstractMonster;
+import com.megacrit.cardcrawl.monsters.MonsterGroup;
 import com.megacrit.cardcrawl.unlock.UnlockTracker;
 import javassist.CtClass;
 import org.apache.logging.log4j.LogManager;
@@ -29,15 +31,23 @@ import spireQuests.cardvars.SecondMagicNumber;
 import spireQuests.commands.AddQuestCommand;
 import spireQuests.commands.SpawnQuestCommand;
 import spireQuests.patches.QuestRunHistoryPatch;
+import spireQuests.questStats.QuestStatManager;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestGenerator;
 import spireQuests.quests.QuestManager;
+import spireQuests.quests.coda.potions.NuclearJuicePotion;
+import spireQuests.quests.gk.monsters.ICEliteMonster;
+import spireQuests.quests.modargo.monsters.DefectEliteMonster;
+import spireQuests.quests.ramchops.EvilSentryQuest;
+import spireQuests.quests.ramchops.monsters.EvilSentry;
 import spireQuests.rewards.SingleCardReward;
 import spireQuests.ui.FixedModLabeledToggleButton.FixedModLabeledToggleButton;
 import spireQuests.ui.QuestBoardScreen;
 import spireQuests.util.CompatUtil;
+import spireQuests.util.QuestStringsUtils;
 import spireQuests.util.TexLoader;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
@@ -55,7 +65,8 @@ public class Anniv8Mod implements
         AddAudioSubscriber,
         PostDungeonInitializeSubscriber,
         StartGameSubscriber,
-        PostRenderSubscriber {
+        PostRenderSubscriber,
+        PostDeathSubscriber {
 
     public static final Logger logger = LogManager.getLogger("SpireQuests");
 
@@ -154,7 +165,9 @@ public class Anniv8Mod implements
         QuestManager.initialize();
         QuestGenerator.initialize();
         QuestRunHistoryPatch.initialize();
+        QuestStatManager.initialize();
         addPotions();
+        addMonsters();
         addSaveFields();
         initializeSavedData();
         initializeConfig();
@@ -168,10 +181,23 @@ public class Anniv8Mod implements
     }
 
     public static void addPotions() {
+
+        BaseMod.addPotion(NuclearJuicePotion.class, null, null, null, NuclearJuicePotion.POTION_ID);
+
         if (Loader.isModLoaded("widepotions")) {
             Consumer<String> whitelist = getWidePotionsWhitelistMethod();
         }
 
+    }
+
+    public static void addMonsters() {
+        BaseMod.addMonster(ICEliteMonster.ID, () -> new ICEliteMonster());
+        BaseMod.addMonster(DefectEliteMonster.ID, () -> new DefectEliteMonster());
+        BaseMod.addMonster(EvilSentry.ID, QuestStringsUtils.getQuestString(makeID(EvilSentryQuest.class.getSimpleName())).TITLE, () -> new MonsterGroup(new AbstractMonster[]{
+                new EvilSentry(-330.0F, 25.0F),
+                new EvilSentry(-85.0F, 10.0F),
+                new EvilSentry(140.0F, 30.0F)
+        }));
     }
 
     private static Consumer<String> getWidePotionsWhitelistMethod() {
@@ -253,13 +279,19 @@ public class Anniv8Mod implements
             loadStringsFile(languageAndFolder, PotionStrings.class);
             loadStringsFile(languageAndFolder, MonsterStrings.class);
             loadStringsFile(languageAndFolder, BlightStrings.class);
+            QuestStringsUtils.registerQuestStrings(filepath);
         }
     }
 
     private void loadStringsFile(String key, Class<?> stringType) {
         String filepath = modID + "Resources/localization/" + key + "/" + stringType.getSimpleName().replace("Strings", "strings") + ".json";
         if (Gdx.files.internal(filepath).exists()) {
-            BaseMod.loadCustomStringsFile(stringType, filepath);
+            try {
+                BaseMod.loadCustomStringsFile(stringType, filepath);
+            }
+            catch (Exception e) {
+                throw new RuntimeException("Error loading strings file " + filepath, e);
+            }
         }
     }
 
@@ -384,6 +416,33 @@ public class Anniv8Mod implements
             modConfig.save();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void receivePostDeath() {
+        QuestManager.failAllActiveQuests();
+    }
+
+
+    public static boolean isStatsFTUEComplete() {
+        if (modConfig == null) {
+            return true;
+        }
+        return modConfig.getBool("CompletedStatsFTUE");
+    }
+
+
+    public static void completeStatsFTUE() {
+        if (modConfig == null) {
+            return;
+        }
+        try {
+            modConfig.setBool("CompletedStatsFTUE", true);
+            modConfig.save();
+        } catch (IOException e) {
+            logger.error(e);
         }
     }
 

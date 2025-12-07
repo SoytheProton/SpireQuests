@@ -58,7 +58,6 @@ public class BackToBasicsQuest extends AbstractQuest {
                 .add(this);
 
         useDefaultReward = false;
-        rewardsText = localization.EXTRA_TEXT[1];
     }
 
     @Override
@@ -71,11 +70,7 @@ public class BackToBasicsQuest extends AbstractQuest {
                     .filter(c -> c.rarity == CardRarity.BASIC || c.rarity == CardRarity.COMMON)
                     .count();
 
-        if (count >= 5) {
-            return true;
-        }
-
-        return false;
+        return count >= 5;
     }
 
     @Override
@@ -103,6 +98,6 @@ public class BackToBasicsQuest extends AbstractQuest {
     private void upgradeAndDisplay(AbstractCard card, float xPos, float yPos) {
         card.upgrade();
         AbstractDungeon.player.bottledCardUpgradeCheck(card);
-        AbstractDungeon.effectList.add(new ShowCardBrieflyEffect(card.makeStatEquivalentCopy(), xPos, yPos));
+        AbstractDungeon.topLevelEffectsQueue.add(new ShowCardBrieflyEffect(card.makeStatEquivalentCopy(), xPos, yPos));
     }
 }

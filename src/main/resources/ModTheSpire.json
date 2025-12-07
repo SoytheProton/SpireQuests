@@ -8,9 +8,14 @@
     "Alchyr",
     "Pandemonium",
     "Darkglade",
+    "RamChops Games",
     "coda",
     "SoytheProton",
-    "Mangochicken"
+    "JackRenoson",
+    "Mangochicken",
+    "snumodder",
+    "Blank The Evil",
+    "Theabest"
   ],
   "description": "${project.description}",
   "version": "${project.version}",
@@ -21,4 +26,3 @@
     "stslib"
   ]
 }
-

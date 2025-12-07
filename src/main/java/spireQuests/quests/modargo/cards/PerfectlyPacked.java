@@ -8,6 +8,7 @@ import spireQuests.quests.modargo.PackFanaticQuest;
 import spireQuests.quests.modargo.actions.PerfectlyPackedAction;
 
 import static spireQuests.Anniv8Mod.makeID;
+import static spireQuests.util.CompatUtil.pmLoaded;
 
 public class PerfectlyPacked extends AbstractSQCard {
     public static final String ID = makeID(PerfectlyPacked.class.getSimpleName());
@@ -30,6 +31,9 @@ public class PerfectlyPacked extends AbstractSQCard {
     @Override
     public boolean canUse(AbstractPlayer p, AbstractMonster m) {
         if (!super.canUse(p, m)) {
+            return false;
+        }
+        if (!pmLoaded()) {
             return false;
         }
         long packCardCount = AbstractDungeon.player.drawPile.group.stream()

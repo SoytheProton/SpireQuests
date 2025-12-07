@@ -11,14 +11,20 @@ import com.megacrit.cardcrawl.core.AbstractCreature;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.map.MapRoomNode;
+import com.megacrit.cardcrawl.orbs.AbstractOrb;
+import com.megacrit.cardcrawl.orbs.EmptyOrbSlot;
+import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
+import com.megacrit.cardcrawl.rewards.chests.BossChest;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.relics.Boot;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import com.megacrit.cardcrawl.rooms.ShopRoom;
 import com.megacrit.cardcrawl.saveAndContinue.SaveFile;
 import com.megacrit.cardcrawl.ui.panels.PotionPopUp;
 import com.megacrit.cardcrawl.ui.panels.TopPanel;
 import javassist.CtBehavior;
 import spireQuests.quests.Trigger;
+import spireQuests.quests.ramchops.patch.ShopMoneyTracker;
 
 public class QuestTriggers {
     public static final Trigger<Void> DECK_CHANGE = new Trigger<>();
@@ -39,6 +45,18 @@ public class QuestTriggers {
 
     public static final Trigger<Void> IMPENDING_DAY_KILL = new Trigger<>();
     public static final Trigger<Void> BOOT_TRIGGER = new Trigger<>();
+    public static final Trigger<AbstractOrb> CHANNEL_ORB = new Trigger<>();
+    public static final Trigger<AbstractOrb> EVOKE_ORB = new Trigger<>();
+    public static final Trigger<Integer> ACT_CHANGE = new Trigger<>();
+    public static final Trigger<AbstractChest> CHEST_OPENED = new Trigger<>(); //NOTE: This includes both normal and boss chests.
+
+
+    public static final Trigger<Integer> HEALTH_HEALED = new Trigger<>();
+    public static final Trigger<Void> MAX_HEALTH_CHANGED = new Trigger<>();
+    public static final Trigger<Integer> MAX_HEALTH_INCREASED = new Trigger<>();
+    public static final Trigger<Integer> MAX_HEALTH_DECREASED = new Trigger<>();
+    public static final Trigger<Integer> LOSE_MONEY = new Trigger<>(); //NOTE: This counts all instances of losing money, including events
+    public static final Trigger<Integer> MONEY_SPENT_AT_SHOP = new Trigger<>(); //NOTE: This counts only money spent at shop and not money lost through events.
 
     private static boolean disabled() {
         return CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY;
@@ -189,6 +207,72 @@ public class QuestTriggers {
         }
     }
 
+    @SpirePatch2(clz = AbstractPlayer.class, method = "evokeOrb")
+    public static class evokeOrb {
+        @SpirePrefixPatch
+        public static void evokePatch(AbstractPlayer __instance) {
+            if (disabled()) return;
+
+            if (!__instance.orbs.isEmpty() && !(__instance.orbs.get(0) instanceof EmptyOrbSlot)) {
+                EVOKE_ORB.trigger(__instance.orbs.get(0));
+            }
+
+        }
+    }
+    
+    @SpirePatch2(clz = AbstractPlayer.class, method = "channelOrb")
+    public static class channelOrb {
+        @SpirePrefixPatch
+        public static void channelPatch(AbstractPlayer __instance, AbstractOrb orbToSet) {
+            if (disabled()) return;
+
+            if (__instance.maxOrbs > 0){
+                CHANNEL_ORB.trigger(orbToSet);
+            }
+        }
+    }
+
+    @SpirePatch2(
+            clz = AbstractDungeon.class,
+            method = "dungeonTransitionSetup"
+    )
+    public static class dungeonTransitionSetup {
+        @SpirePostfixPatch
+        public static void dungeonTransitionPostfix(){
+            if (disabled()) return;
+            ACT_CHANGE.trigger(AbstractDungeon.actNum);
+        }
+    }
+
+    @SpirePatch2(
+            clz = AbstractChest.class,
+            method = "open",
+            paramtypez = {boolean.class}
+    )
+
+    public static class Open{
+        @SpirePostfixPatch
+        public static void OpenChestPostfix(AbstractChest __instance, boolean bossChest){
+            if (disabled()) return;
+            CHEST_OPENED.trigger(__instance);
+        }
+    }
+
+    @SpirePatch2(
+            clz = BossChest.class,
+            method = "open",
+            paramtypez = {boolean.class}
+    )
+    public static class OpenBoss {
+        @SpirePostfixPatch
+        public static void OpenChestPostfix(AbstractChest __instance, boolean bossChest) {
+            if (disabled()) return;
+            CHEST_OPENED.trigger(__instance);
+        }
+    }
+
+    @SpirePatch2(clz= PotionPopUp.class, method = "updateInput")
+    @SpirePatch2(clz= PotionPopUp.class, method = "updateTargetMode")
     @SpirePatch2(clz = PotionPopUp.class, method = "updateInput")
     @SpirePatch2(clz = PotionPopUp.class, method = "updateTargetMode")
     public static class PotionUse {
@@ -226,6 +310,57 @@ public class QuestTriggers {
         public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
             Matcher finalMatcher = new Matcher.MethodCallMatcher(Boot.class, "flash");
             return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+
+    @SpirePatch(clz = AbstractCreature.class, method = "heal", paramtypez = {int.class, boolean.class})
+    public static class OnHealHealth {
+        @SpirePostfixPatch
+        public static void onHeal(AbstractCreature __instance, int healAmount) {
+            if (disabled()) return;
+
+            if (__instance instanceof AbstractPlayer && healAmount > 0)
+                HEALTH_HEALED.trigger(healAmount);
+        }
+    }
+
+    @SpirePatch(clz = AbstractCreature.class, method = "increaseMaxHp")
+    public static class OnIncreaseMaxHealth {
+        @SpirePostfixPatch
+        public static void onIncrease(AbstractCreature __instance, int amount) {
+            if (disabled()) return;
+
+            if (__instance instanceof AbstractPlayer && amount > 0) {
+                MAX_HEALTH_INCREASED.trigger(amount);
+                MAX_HEALTH_CHANGED.trigger();
+            }
+        }
+    }
+
+    @SpirePatch(clz = AbstractCreature.class, method = "decreaseMaxHealth")
+    public static class OnDecreaseMaxHealth {
+        @SpirePostfixPatch
+        public static void onDecrease(AbstractCreature __instance, int amount) {
+            if (disabled()) return;
+
+            if (__instance instanceof AbstractPlayer && amount > 0) {
+                MAX_HEALTH_DECREASED.trigger(amount);
+                MAX_HEALTH_CHANGED.trigger();
+            }
+        }
+    }
+    @SpirePatch2(
+            clz = AbstractPlayer.class,
+            method = "loseGold",
+            paramtypez = int.class)
+    public static class SpendGoldPatch{
+        @SpirePrefixPatch
+        public static void LoseGoldPatch(AbstractPlayer __instance, int goldAmount){
+
+            LOSE_MONEY.trigger(goldAmount);
+
+            if (AbstractDungeon.getCurrRoom() instanceof ShopRoom) {
+                MONEY_SPENT_AT_SHOP.trigger(goldAmount);
+            }
+
         }
     }
 

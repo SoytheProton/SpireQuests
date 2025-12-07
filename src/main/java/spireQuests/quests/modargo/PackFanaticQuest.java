@@ -1,7 +1,6 @@
 package spireQuests.quests.modargo;
 
 import basemod.ReflectionHacks;
-import com.evacipated.cardcrawl.modthespire.Loader;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import spireQuests.patches.QuestTriggers;
@@ -12,6 +11,8 @@ import spireQuests.quests.modargo.cards.PerfectlyPacked;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static spireQuests.util.CompatUtil.pmLoaded;
+
 public class PackFanaticQuest extends AbstractQuest {
     public static Class<?> anniv5;
     public static Class<?> abstractCardPack;
@@ -19,7 +20,7 @@ public class PackFanaticQuest extends AbstractQuest {
 
     public PackFanaticQuest() {
         super(QuestType.LONG, QuestDifficulty.NORMAL);
-        if (Loader.isModLoaded("anniv5")) {
+        if (pmLoaded()) {
             try {
                 anniv5 = Class.forName("thePackmaster.SpireAnniversary5Mod");
                 abstractCardPack = Class.forName("thePackmaster.packs.AbstractCardPack");
@@ -38,7 +39,7 @@ public class PackFanaticQuest extends AbstractQuest {
                     .distinct()
                     .collect(Collectors.toList());
             Set<String> poolPackIDs = getCurrentPoolPackIDs();
-            return deckPackIDs.stream().filter(poolPackIDs::contains).count();
+            return (int)deckPackIDs.stream().filter(poolPackIDs::contains).count();
         }).add(this);
 
         addReward(new QuestReward.CardReward(new PerfectlyPacked()));
@@ -47,7 +48,7 @@ public class PackFanaticQuest extends AbstractQuest {
 
     @Override
     public boolean canSpawn() {
-        return Loader.isModLoaded("anniv5")
+        return pmLoaded()
                 && anniv5 != null
                 && abstractCardPack != null
                 && cardParentMap != null

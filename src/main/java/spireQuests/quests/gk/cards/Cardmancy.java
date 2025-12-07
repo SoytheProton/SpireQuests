@@ -8,6 +8,7 @@ import spireQuests.util.Wiz;
 
 import static spireQuests.Anniv8Mod.makeID;
 import static spireQuests.util.CompatUtil.PM_COLOR;
+import static spireQuests.util.CompatUtil.pmLoaded;
 
 public class Cardmancy extends AbstractBPCard {
     public static final String ID = makeID(Cardmancy.class.getSimpleName());
@@ -15,9 +16,11 @@ public class Cardmancy extends AbstractBPCard {
     public Cardmancy() {
         super(ID, "gk", 0, CardType.SKILL, CardRarity.BASIC, CardTarget.SELF, PM_COLOR);
 
-        setBackgroundTexture(
-                "anniv5Resources/images/512/coreset/skill.png",
-                "anniv5Resources/images/1024/coreset/skill.png");
+        if (pmLoaded()) {
+            setBackgroundTexture(
+                    "anniv5Resources/images/512/coreset/skill.png",
+                    "anniv5Resources/images/1024/coreset/skill.png");
+        }
 
         baseBlock = block = 2;
     }

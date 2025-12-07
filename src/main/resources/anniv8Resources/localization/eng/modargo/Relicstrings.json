@@ -12,5 +12,48 @@
     "DESCRIPTIONS": [
       "Whenever you enter a #y? room, gain #b1 Max HP."
     ]
+  },
+  "${ModID}:FloralGarland": {
+    "NAME": "Floral Garland",
+    "FLAVOR": "Blessed by one pure of heart.",
+    "DESCRIPTIONS": [
+      "The first time you draw a #rCurse each combat, draw #b1 card."
+    ]
+  },
+  "${ModID}:SpireAlloyHelmet": {
+    "NAME": "Spire Alloy Helmet",
+    "FLAVOR": "Made from an unusual mix of metals.",
+    "DESCRIPTIONS": [
+      "Whenever you receive #yWeak or #yFrail, reduce the amount by #b1."
+    ]
+  },
+  "${ModID}:JewelledBauble": {
+    "NAME": "Jewelled Bauble",
+    "FLAVOR": "Holding this charm is said to invite new ideas.",
+    "DESCRIPTIONS": [
+      "At the start of each combat, choose #b1 of #b3 #yUncommon cards to add into your hand."
+    ]
+  },
+  "${ModID}:MulticlassEmblem": {
+    "NAME": "Multiclass Emblem",
+    "FLAVOR": "A symbol of expertise.",
+    "DESCRIPTIONS": [
+      "Combat reward screens contain cards from another character. Whenever you add one of their cards to your deck, gain #b%d #yGold.",
+      "Combat reward screens contain cards from %s. Whenever you add a card from %s to your deck, gain #b%d #yGold."
+    ]
+  },
+  "${ModID}:CustomerAppreciationAward": {
+    "NAME": "Customer Appreciation Award",
+    "FLAVOR": "For the best of customers.",
+    "DESCRIPTIONS": [
+      "Upon pickup, gain #b10 gold, gain #b1 Max HP, and #yUpgrade #b1 random #yCommon card."
+    ]
+  },
+  "${ModID}:VolatileStardust": {
+    "NAME": "Volatile Stardust",
+    "FLAVOR": "Extracted from a fallen star.",
+    "DESCRIPTIONS": [
+      "Whenever you fully block attack damage, deal #b8 damage back."
+    ]
   }
 }
