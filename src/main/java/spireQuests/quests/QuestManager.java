@@ -19,7 +19,7 @@ import com.megacrit.cardcrawl.vfx.ThoughtBubble;
 import spireQuests.Anniv8Mod;
 import spireQuests.cardmods.QuestboundMod;
 import spireQuests.patches.QuestRunHistoryPatch;
-import spireQuests.patches.QuestboundRelicFields;
+import spireQuests.patches.QuestboundRelicsPatch;
 import spireQuests.questStats.QuestStatManager;
 import spireQuests.util.RelicMiscUtil;
 import spireQuests.util.Wiz;
@@ -80,7 +80,7 @@ public class QuestManager {
                             }
                             if(r != null) {
                                 quest.questboundRelics.add(r);
-                                QuestboundRelicFields.isQuestbound.set(r, quest);
+                                QuestboundRelicsPatch.QuestboundRelicFields.isQuestbound.set(r, quest);
                                 String questName = FontHelper.colorString(CardCrawlGame.languagePack.getUIString(quest.id).TEXT[0], "y");
                                 r.tips.add(new PowerTip(keywords.get("Questbound").PROPER_NAME, String.format(CardCrawlGame.languagePack.getUIString(makeID("Questbound")).TEXT[2],questName)));
                             }
@@ -156,14 +156,13 @@ public class QuestManager {
         }
         if (quest.questboundRelics != null) {
             quest.questboundRelics.forEach(r -> {
-                QuestboundRelicFields.isQuestbound.set(r, quest);
+                QuestboundRelicsPatch.QuestboundRelicFields.isQuestbound.set(r, quest);
                 if(quest.removeQuestboundDuplicate) {
                     RelicMiscUtil.removeRelicFromPool(r);
                 }
                 String questName = FontHelper.colorString(CardCrawlGame.languagePack.getUIString(quest.id).TEXT[0], "y");
                 r.instantObtain();
                 r.tips.add(new PowerTip(keywords.get("Questbound").PROPER_NAME, String.format(CardCrawlGame.languagePack.getUIString(makeID("Questbound")).TEXT[2],questName)));
-                AbstractDungeon.effectList.add(new ShowCardandFakeObtainEffect(c.makeCopy(), (float) (Settings.WIDTH / 2), (float) (Settings.HEIGHT / 2)));
             });
         }
         QuestStatManager.markTaken(quest.id);
@@ -183,7 +182,7 @@ public class QuestManager {
     }
 
     public static void completeQuest(AbstractQuest quest) {
-        if (!quest.complete() && !quest.fail()) {
+        if (!quest.isCompleted() && !quest.isFailed()) {
             Anniv8Mod.logger.warn("completeQuest called when quest is not complete/failed!");
             return;
         }

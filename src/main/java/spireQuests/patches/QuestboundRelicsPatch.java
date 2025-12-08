@@ -11,6 +11,7 @@ import com.megacrit.cardcrawl.relics.AbstractRelic;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import spireQuests.Anniv8Mod;
+import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestManager;
 import spireQuests.util.RelicMiscUtil;
 import spireQuests.util.TexLoader;
@@ -19,7 +20,15 @@ import spireQuests.util.Wiz;
 import java.util.ArrayList;
 
 public class QuestboundRelicsPatch {
-    // why the HELL do relics have like 2032341945719 different rendering methods.
+
+    @SpirePatch(
+            clz = AbstractRelic.class,
+            method = SpirePatch.CLASS
+    )
+    public static class QuestboundRelicFields {
+        public static SpireField<AbstractQuest> isQuestbound = new SpireField<>(()->null);
+    }
+
 
     private static final Texture tex = TexLoader.getTexture(Anniv8Mod.modID + "Resources/images/ui/questboundIcon.png");
     private static float offsetX(AbstractRelic r) {
@@ -56,7 +65,7 @@ public class QuestboundRelicsPatch {
     public static class OnCombatEndOrVictory {
         @SpirePrefixPatch
         public static void combatEndOrVictoryPatch() {
-            QuestManager.currentQuests.get(Wiz.adp()).forEach(quest -> {
+            QuestManager.quests().forEach(quest -> {
                 if (quest.isFailed() || quest.isCompleted()) {
                     ArrayList<AbstractRelic> toRemove = new ArrayList<>();
                     for (AbstractRelic r : Wiz.adp().relics) {
