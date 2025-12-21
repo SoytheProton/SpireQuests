@@ -1,11 +1,16 @@
 package spireQuests.quests;
 
+import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.cards.AbstractCard;
+import com.megacrit.cardcrawl.characters.AbstractPlayer;
 import com.megacrit.cardcrawl.core.CardCrawlGame;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.helpers.PowerTip;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.saveAndContinue.SaveFile;
+import javassist.CtBehavior;
 import spireQuests.Anniv8Mod;
+import spireQuests.quests.gk.BountyICQuest;
 import spireQuests.util.QuestStrings;
 import spireQuests.util.QuestStringsUtils;
 
@@ -69,6 +74,9 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
     private ArrayList<PowerTip> previewTooltips;
 
+    //If true, the quest will automatically complete when the player leaves the room with the conditions fulfilled.
+    public boolean isAutoComplete;
+
     /*
     trackers that require another tracker to be completed first
 
@@ -90,6 +98,7 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         triggers = new ArrayList<>();
 
         complete = false;
+        isAutoComplete = false;
 
         questStrings = QuestStringsUtils.getQuestString(id);
         if (questStrings == null) {
@@ -193,8 +202,9 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
         if (!questTracker.hidden) {
             if (trackerTextIndex >= questStrings.TRACKER_TEXT.length) {
-                throw new RuntimeException("Quest " + id + " needs more entries in TRACKER_TEXT for its trackers");
+               throw new RuntimeException("Quest " + id + " needs more entries in TRACKER_TEXT for its trackers");
             }
+            
             questTracker.text = questStrings.TRACKER_TEXT[trackerTextIndex];
             trackerTextIndex++;
         }
@@ -216,7 +226,11 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
     public boolean complete() {
         if (failed) return false;
-        if (complete) return true;
+        if (complete) {
+            return true;
+        }
+
+
 
         for (Tracker tracker : trackers) {
             if (!tracker.isComplete()) return false;
@@ -257,6 +271,15 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
         trackers.clear();
         triggers.clear();
         trackers.add(new QuestFailedTracker());
+    }
+
+    public void forceComplete() {
+        if (failed) Anniv8Mod.logger.warn("Forcefully completed quest that was failed {}", this.id);
+
+        complete = true;
+        trackers.clear();
+        triggers.clear();
+        trackers.add(new QuestCompleteTracker());
     }
 
     //override if you want different completion SFX.
@@ -896,4 +919,27 @@ public abstract class AbstractQuest implements Comparable<AbstractQuest> {
 
     public boolean removeQuestboundDuplicate = true;
     public boolean returnQuestboundRelics = true;
+    @SpirePatch(clz = AbstractDungeon.class, method = "nextRoomTransition", paramtypez = {SaveFile.class})
+    public static class AutoCompleteQuestLater {
+        @SpireInsertPatch(locator = Locator.class)
+        public static void enteringRoomPatch(AbstractDungeon __instance, SaveFile file) {
+            if (AbstractDungeon.currMapNode != null) {
+                AbstractQuest q = QuestManager.quests().stream()
+                        .filter(quest -> quest.isAutoComplete && quest.isCompleted())
+                        .findAny()
+                        .orElse(null);
+                if(q != null) {
+                    QuestManager.completeQuest(q);
+                }
+            }
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            @Override
+            public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
+                Matcher finalMatcher = new Matcher.FieldAccessMatcher(AbstractPlayer.class, "relics");
+                return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+            }
+        }
+    }
 }

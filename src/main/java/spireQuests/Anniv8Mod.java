@@ -35,8 +35,11 @@ import spireQuests.questStats.QuestStatManager;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestGenerator;
 import spireQuests.quests.QuestManager;
+import spireQuests.quests.coda.monsters.CharadeMonster;
 import spireQuests.quests.coda.potions.NuclearJuicePotion;
+import spireQuests.quests.enbeon.monsters.WatcherEliteMonster;
 import spireQuests.quests.gk.monsters.ICEliteMonster;
+import spireQuests.quests.modargo.RealityTwistQuest;
 import spireQuests.quests.modargo.monsters.DefectEliteMonster;
 import spireQuests.quests.ramchops.EvilSentryQuest;
 import spireQuests.quests.ramchops.monsters.EvilSentry;
@@ -80,6 +83,9 @@ public class Anniv8Mod implements
     public static SpireConfig modConfig = null;
     public static final String QUESTBOUND_CONFIG = "questboundConfig";
     public static boolean questboundConfig = true;
+    public static final String TROPHY_TOOLTIP_CONFIG = "trophyTooltipsConfig";
+    public static boolean trophyTooltipsConfig = false;
+
 
     public static final String modID = "anniv8";
 
@@ -191,13 +197,16 @@ public class Anniv8Mod implements
     }
 
     public static void addMonsters() {
+        RealityTwistQuest.addMonsters();
         BaseMod.addMonster(ICEliteMonster.ID, () -> new ICEliteMonster());
         BaseMod.addMonster(DefectEliteMonster.ID, () -> new DefectEliteMonster());
+        BaseMod.addMonster(WatcherEliteMonster.ID, () -> new WatcherEliteMonster());
         BaseMod.addMonster(EvilSentry.ID, QuestStringsUtils.getQuestString(makeID(EvilSentryQuest.class.getSimpleName())).TITLE, () -> new MonsterGroup(new AbstractMonster[]{
                 new EvilSentry(-330.0F, 25.0F),
                 new EvilSentry(-85.0F, 10.0F),
                 new EvilSentry(140.0F, 30.0F)
         }));
+        BaseMod.addMonster(CharadeMonster.ID, () -> new CharadeMonster());
     }
 
     private static Consumer<String> getWidePotionsWhitelistMethod() {
@@ -384,16 +393,28 @@ public class Anniv8Mod implements
                 });
         settingsPanel.addUIElement(toggleQuestboundButton);
 
+        FixedModLabeledToggleButton toggleTrophyTooltipsButton = new FixedModLabeledToggleButton(configStrings.TEXT[5],
+                350.0f, 500.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                trophyTooltipsConfig,
+                settingsPanel,
+                (label) -> {},
+                (button) -> {
+                    trophyTooltipsConfig = button.enabled;
+                    saveConfig();
+                });
+        settingsPanel.addUIElement(toggleTrophyTooltipsButton);
+
         BaseMod.registerModBadge(badge, configStrings.TEXT[0], configStrings.TEXT[1], configStrings.TEXT[2], settingsPanel);
     }
 
     private void initializeSavedData() {
         hardModeConfig = modConfig.getBool(HARD_MODE_CONFIG);
         questboundConfig = modConfig.getBool(QUESTBOUND_CONFIG);
+        trophyTooltipsConfig = modConfig.getBool(TROPHY_TOOLTIP_CONFIG);
     }
 
     public static void addSaveFields() {
-
+        RealityTwistQuest.addSaveFields();
     }
 
     @Override
@@ -409,10 +430,15 @@ public class Anniv8Mod implements
         return questboundConfig;
     }
 
+    public static boolean trophyTooltipsEnabled() {
+        return trophyTooltipsConfig;
+    }
+
     public static void saveConfig() {
         try {
             modConfig.setBool(HARD_MODE_CONFIG, hardModeConfig);
             modConfig.setBool(QUESTBOUND_CONFIG, questboundConfig);
+            modConfig.setBool(TROPHY_TOOLTIP_CONFIG, trophyTooltipsConfig);
             modConfig.save();
         } catch (Exception e) {
             e.printStackTrace();
