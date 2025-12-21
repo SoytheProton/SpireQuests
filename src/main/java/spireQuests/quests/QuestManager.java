@@ -182,7 +182,7 @@ public class QuestManager {
     }
 
     public static void completeQuest(AbstractQuest quest) {
-        if (!quest.isCompleted() && !quest.isFailed()) {
+        if (!quest.complete() && !quest.fail()) {
             Anniv8Mod.logger.warn("completeQuest called when quest is not complete/failed!");
             return;
         }
