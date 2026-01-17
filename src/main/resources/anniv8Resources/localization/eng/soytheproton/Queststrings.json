@@ -36,13 +36,5 @@
       "Fun Fact!",
       "SFXs \"borrowed\" from Celeste."
     ]
-  },
-  "${ModID}:MothQuest": {
-    "TITLE": "Fluttering Friend",
-    "DESCRIPTION": "Take no more than #b25 unblocked attack damage this act",
-    "AUTHOR": "Aurora",
-    "TRACKER_TEXT": [
-      "Unblocked attack damage taken"
-    ]
   }
 }
