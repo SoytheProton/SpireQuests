@@ -1,17 +1,19 @@
 package spireQuests.quests.soytheproton;
 
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
+import com.megacrit.cardcrawl.helpers.PowerTip;
 import spireQuests.patches.QuestTriggers;
 import spireQuests.quests.AbstractQuest;
 import spireQuests.quests.QuestReward;
 import spireQuests.quests.soytheproton.relics.IoMoth;
+
+import java.util.List;
 
 public class MothQuest extends AbstractQuest {
     public MothQuest() {
         super(QuestType.SHORT, QuestDifficulty.HARD);
 
         new TriggerTracker<>(QuestTriggers.ACT_CHANGE,1)
-                .hide()
                 .add(this);
         new TriggeredUpdateTracker<Integer, Integer>(QuestTriggers.UNBLOCKED_ATTACK_DAMAGE_TAKEN,
                 0, 25, Integer::sum, ()->false) {
@@ -27,6 +29,12 @@ public class MothQuest extends AbstractQuest {
         }
                 .add(this);
         addReward(new QuestReward.RelicReward(new IoMoth()));
+    }
+
+    @Override
+    public void makeTooltips(List<PowerTip> tipList) {
+        super.makeTooltips(tipList);
+        tipList.add(new PowerTip(questStrings.EXTRA_TEXT[0],questStrings.EXTRA_TEXT[1]));
     }
 
     @Override

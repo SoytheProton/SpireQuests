@@ -342,9 +342,14 @@ public class Anniv8Mod implements
         }
     }
 
+    // Audio Keys idk.
+    public static final String FLY_SFX = makeID("FlySfx");
+    public static final String MOTH_SFX = makeID("MothSfx");
 
     @Override
     public void receiveAddAudio() {
+        BaseMod.addAudio(FLY_SFX,modID + "Resources/audio/soytheproton/strawberry_flyaway.wav");
+        BaseMod.addAudio(MOTH_SFX,modID + "Resources/audio/soytheproton/strawberry_laugh.wav");
     }
 
     @Override

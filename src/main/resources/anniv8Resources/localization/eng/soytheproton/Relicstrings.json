@@ -7,8 +7,8 @@
     ]
   },
   "${ModID}:IoMoth": {
-    "NAME": "Io Moth",
-    "FLAVOR": "A fluttering friend to join you on your quest.",
+    "NAME": "Runic Moth",
+    "FLAVOR": "An ancient charm depicting a Lepidoptera.",
     "DESCRIPTIONS": [
       "At the start of your turn, until you lose HP, draw 1 additional card."
     ]
