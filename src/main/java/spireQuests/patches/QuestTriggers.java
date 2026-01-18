@@ -83,6 +83,7 @@ public class QuestTriggers {
     public static final Trigger<AbstractPotion> DISCARD_POTION = new Trigger<>();
     public static final Trigger<AbstractPotion> SKIP_POTION = new Trigger<>();
     public static final Trigger<AbstractGameAction.AttackEffect> ATTACK_ANIMATION = new Trigger<>();    //NOTE: This specifically checks for AbstractGameAction.AttackEffect animations. Other animations will not trigger this event.
+    public static final Trigger<Integer> UNBLOCKED_ATTACK_DAMAGE_TAKEN = new Trigger<>();
     public static final Trigger<Void> QUEST_COMPLETE = new Trigger<>();
 
     private static boolean disabled() {
