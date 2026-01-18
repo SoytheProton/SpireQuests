@@ -3,6 +3,7 @@ package spireQuests.patches;
 import basemod.ReflectionHacks;
 import com.evacipated.cardcrawl.modthespire.lib.*;
 import com.megacrit.cardcrawl.actions.AbstractGameAction;
+import com.megacrit.cardcrawl.actions.GameActionManager;
 import com.megacrit.cardcrawl.actions.utility.UseCardAction;
 import com.megacrit.cardcrawl.cards.AbstractCard;
 import com.megacrit.cardcrawl.cards.CardGroup;
@@ -613,4 +614,23 @@ public class QuestTriggers {
             ATTACK_ANIMATION.trigger(effect);
         }
     }
+
+    @SpirePatch(clz = AbstractPlayer.class, method = "damage")
+    public static class OnTakeUnblockedAttackDamage {
+        @SpireInsertPatch(locator = Locator.class, localvars = {"damageAmount"})
+        public static void onDamage(AbstractPlayer __instance, DamageInfo info, int damageAmount) {
+            if (disabled()) return;
+
+            UNBLOCKED_ATTACK_DAMAGE_TAKEN.trigger(damageAmount);
+        }
+
+        private static class Locator extends SpireInsertLocator {
+            @Override
+            public int[] Locate(CtBehavior ctMethodToPatch) throws Exception {
+                Matcher finalMatcher = new Matcher.FieldAccessMatcher(GameActionManager.class, "damageReceivedThisTurn");
+                return LineFinder.findInOrder(ctMethodToPatch, finalMatcher);
+            }
+        }
+    }
+
 }
