@@ -1,5 +1,6 @@
 package spireQuests.ui;
 
+import basemod.helpers.CardPowerTip;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -136,14 +137,14 @@ public class QuestBoardQuest {
         float TIP_X_THRESHOLD = 1544.0F * Settings.xScale;
         float TIP_OFFSET_R_X = 20.0F * Settings.xScale;
         float TIP_OFFSET_L_X = -380.0F * Settings.xScale;
-        boolean hasManyTips = this.tips.size() > 3;
+        boolean hasLongTips = tips.size() > 2 && tips.stream().anyMatch(t -> t instanceof CardPowerTip);
 
-        if (!this.tips.isEmpty()) {
-            if (this.previewHb.cX + this.previewHb.width / 2.0F < TIP_X_THRESHOLD) {
-                TipHelper.queuePowerTips(this.previewHb.cX + this.previewHb.width / 2.0F + TIP_OFFSET_R_X, this.previewHb.cY + TipHelper.calculateAdditionalOffset(this.tips, this.previewHb.cY) + boardY, tips);
+        if (!tips.isEmpty()) {
+            if (previewHb.cX + previewHb.width / 2.0F < TIP_X_THRESHOLD) {
+                TipHelper.queuePowerTips(previewHb.cX + previewHb.width / 2.0F + TIP_OFFSET_R_X, previewHb.cY + TipHelper.calculateAdditionalOffset(tips, previewHb.cY) + boardY, tips);
             } else {
-                float tipX = TIP_OFFSET_L_X + (hasManyTips ? this.tips.size() * -150.0F * Settings.xScale : 0.0F);
-                TipHelper.queuePowerTips(this.previewHb.cX - this.previewHb.width / 2.0F + tipX, this.previewHb.cY + TipHelper.calculateAdditionalOffset(this.tips, this.previewHb.cY) + boardY, tips);
+                float tipX = TIP_OFFSET_L_X + (hasLongTips ? tips.size() * -150.0F * Settings.xScale : 0.0F);
+                TipHelper.queuePowerTips(previewHb.cX - previewHb.width / 2.0F + tipX, previewHb.cY + TipHelper.calculateAdditionalOffset(tips, previewHb.cY) + boardY, tips);
             }
         }
     }
