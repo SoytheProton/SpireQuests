@@ -48,7 +48,7 @@ public class MothFriendPatch {
                 if(q instanceof MothQuest)
                     return true;
             }
-            return AbstractDungeon.player.hasRelic(IoMoth.ID);
+            return false;
         }
     }
 

@@ -2,10 +2,15 @@ package spireQuests.quests.soytheproton.relics;
 
 import com.megacrit.cardcrawl.actions.common.RelicAboveCreatureAction;
 import com.megacrit.cardcrawl.cards.DamageInfo;
+import com.megacrit.cardcrawl.core.CardCrawlGame;
+import com.megacrit.cardcrawl.core.Settings;
 import com.megacrit.cardcrawl.dungeons.AbstractDungeon;
 import com.megacrit.cardcrawl.rooms.AbstractRoom;
+import spireQuests.Anniv8Mod;
 import spireQuests.abstracts.AbstractSQRelic;
+import spireQuests.quests.soytheproton.patches.MothFriendPatch;
 import spireQuests.quests.soytheproton.patches.OnLoseHPInfoPatch;
+import spireQuests.quests.soytheproton.vfx.ExclamationParticle;
 
 import static spireQuests.Anniv8Mod.makeID;
 
@@ -17,35 +22,29 @@ public class IoMoth extends AbstractSQRelic implements OnLoseHPInfoPatch.OnLoseH
 
     public static boolean hasTakenDamageThisCombat;
 
-    public void onEquip() {
-        ++AbstractDungeon.player.masterHandSize;
-    }
-
-    public void onUnequip() {
-        --AbstractDungeon.player.masterHandSize;
-    }
-
     public void atPreBattle() {
         hasTakenDamageThisCombat = false;
     }
 
     public void justEnteredRoom(AbstractRoom room) {
-        grayscale = false;
+        grayscale = true;
     }
 
 
     public void atTurnStart() {
-        if(!hasTakenDamageThisCombat) flash();
+        if(hasTakenDamageThisCombat) flash();
     }
 
     @Override
     public void onLoseHPInfo(DamageInfo info, int damageAmount) {
         if (info.owner != null && info.type != DamageInfo.DamageType.HP_LOSS && info.type != DamageInfo.DamageType.THORNS && damageAmount >= 1 && !hasTakenDamageThisCombat) {
             flash();
-            AbstractDungeon.player.gameHandSize--;
+            CardCrawlGame.sound.play(Anniv8Mod.MOTH_SFX,0.1F);
+            AbstractDungeon.effectList.add(new ExclamationParticle(MothFriendPatch.drawX,MothFriendPatch.drawY + 50.0F * Settings.scale));
+            AbstractDungeon.player.gameHandSize++;
             addToTop(new RelicAboveCreatureAction(AbstractDungeon.player, this));
             hasTakenDamageThisCombat = true;
-            grayscale = true;
+            grayscale = false;
         }
     }
 }
