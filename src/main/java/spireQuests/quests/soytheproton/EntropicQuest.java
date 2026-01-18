@@ -36,7 +36,11 @@ public class EntropicQuest extends AbstractQuest {
             }
         }
 
-        for(AbstractQuest q : generatedQuests) QuestManager.startQuest(q);
+        for(AbstractQuest q : generatedQuests) {
+            q.needHoverTip=true;
+            QuestManager.startQuest(q);
+        }
+
     }
     @Override
     public boolean canSpawn() {
