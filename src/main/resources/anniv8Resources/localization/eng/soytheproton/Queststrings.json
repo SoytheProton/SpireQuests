@@ -15,5 +15,14 @@
       "Boots booted",
       "Combats left"
     ]
+  },
+  "${ModID}:EntropicQuest": {
+    "TITLE": "Entropic Map",
+    "DESCRIPTION": "Complete all your other quests.",
+    "AUTHOR": "CrypticAurora",
+    "REWARD": "Start a random Easy, Normal, and Hard quest.",
+    "TRACKER_TEXT": [
+      "All quests completed"
+    ]
   }
 }

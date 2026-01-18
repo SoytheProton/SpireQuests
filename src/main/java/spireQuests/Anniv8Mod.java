@@ -86,7 +86,8 @@ public class Anniv8Mod implements
     public static boolean questboundConfig = true;
     public static final String TROPHY_TOOLTIP_CONFIG = "trophyTooltipsConfig";
     public static boolean trophyTooltipsConfig = false;
-
+    public static final String ALWAYS_SHOW_DESCRIPTION_CONFIG = "alwaysShowDescriptionConfig";
+    public static boolean alwaysShowDescriptionConfig = false;
 
     public static final String modID = "anniv8";
 
@@ -132,6 +133,7 @@ public class Anniv8Mod implements
             Properties defaults = new Properties();
             defaults.put(HARD_MODE_CONFIG, false);
             defaults.put(QUESTBOUND_CONFIG, true);
+            defaults.put(ALWAYS_SHOW_DESCRIPTION_CONFIG, false);
             modConfig = new SpireConfig(modID, "anniv8Config", defaults);
         } catch (Exception e) {
             e.printStackTrace();
@@ -406,6 +408,17 @@ public class Anniv8Mod implements
                 });
         settingsPanel.addUIElement(toggleTrophyTooltipsButton);
 
+        FixedModLabeledToggleButton toggleDescriptionButton = new FixedModLabeledToggleButton(configStrings.TEXT[6],
+                350.0f, 400.0f, Settings.CREAM_COLOR, FontHelper.charDescFont,
+                alwaysShowDescriptionConfig,
+                settingsPanel,
+                (label) -> {},
+                (button) -> {
+                    alwaysShowDescriptionConfig = button.enabled;
+                    saveConfig();
+                });
+        settingsPanel.addUIElement(toggleDescriptionButton);
+
         BaseMod.registerModBadge(badge, configStrings.TEXT[0], configStrings.TEXT[1], configStrings.TEXT[2], settingsPanel);
     }
 
@@ -413,6 +426,7 @@ public class Anniv8Mod implements
         hardModeConfig = modConfig.getBool(HARD_MODE_CONFIG);
         questboundConfig = modConfig.getBool(QUESTBOUND_CONFIG);
         trophyTooltipsConfig = modConfig.getBool(TROPHY_TOOLTIP_CONFIG);
+        alwaysShowDescriptionConfig = modConfig.getBool(ALWAYS_SHOW_DESCRIPTION_CONFIG);
     }
 
     public static void addSaveFields() {
@@ -436,11 +450,16 @@ public class Anniv8Mod implements
         return trophyTooltipsConfig;
     }
 
+    public static boolean alwaysShowDescriptionEnabled() {
+        return alwaysShowDescriptionConfig;
+    }
+
     public static void saveConfig() {
         try {
             modConfig.setBool(HARD_MODE_CONFIG, hardModeConfig);
             modConfig.setBool(QUESTBOUND_CONFIG, questboundConfig);
             modConfig.setBool(TROPHY_TOOLTIP_CONFIG, trophyTooltipsConfig);
+            modConfig.setBool(ALWAYS_SHOW_DESCRIPTION_CONFIG, alwaysShowDescriptionEnabled());
             modConfig.save();
         } catch (Exception e) {
             e.printStackTrace();

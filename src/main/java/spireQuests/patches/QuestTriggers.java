@@ -17,8 +17,8 @@ import com.megacrit.cardcrawl.orbs.AbstractOrb;
 import com.megacrit.cardcrawl.orbs.EmptyOrbSlot;
 import com.megacrit.cardcrawl.potions.AbstractPotion;
 import com.megacrit.cardcrawl.potions.PotionSlot;
-import com.megacrit.cardcrawl.relics.Boot;
 import com.megacrit.cardcrawl.relics.AbstractRelic;
+import com.megacrit.cardcrawl.relics.Boot;
 import com.megacrit.cardcrawl.relics.Ectoplasm;
 import com.megacrit.cardcrawl.rewards.RewardItem;
 import com.megacrit.cardcrawl.rewards.chests.AbstractChest;
@@ -82,6 +82,7 @@ public class QuestTriggers {
     public static final Trigger<AbstractPotion> DISCARD_POTION = new Trigger<>();
     public static final Trigger<AbstractPotion> SKIP_POTION = new Trigger<>();
     public static final Trigger<AbstractGameAction.AttackEffect> ATTACK_ANIMATION = new Trigger<>();    //NOTE: This specifically checks for AbstractGameAction.AttackEffect animations. Other animations will not trigger this event.
+    public static final Trigger<Void> QUEST_COMPLETE = new Trigger<>();
 
     private static boolean disabled() {
         return CardCrawlGame.mode != CardCrawlGame.GameMode.GAMEPLAY;
