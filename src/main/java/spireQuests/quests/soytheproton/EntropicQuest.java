@@ -20,7 +20,6 @@ public class EntropicQuest extends AbstractQuest {
                 .triggerCondition((x) -> QuestManager.quests().size() == 1)
                 .add(this);
 
-        needHoverTip = true;
     }
 
     @Override
