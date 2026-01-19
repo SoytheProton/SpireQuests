@@ -177,7 +177,7 @@ public class BoatRepairQuest extends AbstractQuest implements MarkNodeQuest, Cus
                     if (node != null && node.getRoom() != null && node.getRoom().getClass() != room1.getRoom().getClass() && node.getRoom().getClass() != room2.getRoom().getClass() && !(node.getRoom() instanceof MonsterRoom || (node.getRoom() instanceof RestRoom && !(hasShovel || curr.equals(markedX))))) {
                         middleFromBot.add(node);
                     }
-                    if (node.y < Math.min(room1.y, room2.y))
+                    if (node.y < Math.max(room1.y, room2.y))
                         middleBotCheckList.add(node);
                 }
             }
@@ -187,6 +187,7 @@ public class BoatRepairQuest extends AbstractQuest implements MarkNodeQuest, Cus
                 validRooms.add(node);
             }
         }
+        if(validRooms.isEmpty()) return null;
         return validRooms.get(rng.random(validRooms.size()-1));
     }
 
@@ -197,19 +198,22 @@ public class BoatRepairQuest extends AbstractQuest implements MarkNodeQuest, Cus
             markedX = null;
         }
         if (AbstractDungeon.actNum >= 3) {
-            MapRoomNode room1 = null;
-            while (room1 == null || room1.getRoom() == null || room1.getRoom() instanceof MonsterRoom || (room1.getRoom() instanceof RestRoom && (!hasShovel) || room1.equals(markedX))) {
-                int y = rng.random(AbstractDungeon.map.size() - 1);
-                room1 = AbstractDungeon.map.get(y).get(rng.random(AbstractDungeon.map.get(y).size() - 1));
+            MapRoomNode room1, room2, room3;
+            room1 = room2 = room3 = null;
+            while (room2 == null || room3 == null) {
+                while(room1 == null || room1.getRoom() == null || room1.getRoom() instanceof MonsterRoom || (room1.getRoom() instanceof RestRoom && (!hasShovel) || room1.equals(markedX))) {
+                    int y = rng.random(AbstractDungeon.map.size() - 1);
+                    room1 = AbstractDungeon.map.get(y).get(rng.random(AbstractDungeon.map.get(y).size() - 1));
+                }
+                room2 = findNewRoom(room1, room1, rng);
+                room3 = findNewRoom(room1, room2, rng);
             }
             if(needAnchor) {
                 ShowMarkedNodesOnMapPatch.ImageField.MarkNode(room1, id, textures.get(0));
             }
-            MapRoomNode room2 = findNewRoom(room1, room1, rng);
             if(needHornCleat) {
                 ShowMarkedNodesOnMapPatch.ImageField.MarkNode(room2, id, textures.get(1));
             }
-            MapRoomNode room3 = findNewRoom(room1, room2, rng);
             if(needCaptainsWheel) {
                 ShowMarkedNodesOnMapPatch.ImageField.MarkNode(room3, id, textures.get(2));
             }
