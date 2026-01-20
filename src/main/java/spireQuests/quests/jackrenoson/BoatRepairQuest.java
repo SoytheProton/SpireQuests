@@ -52,6 +52,7 @@ public class BoatRepairQuest extends AbstractQuest implements MarkNodeQuest, Cus
 
         new TriggerTracker<>(QuestTriggers.OBTAIN_RELIC, 1)
                 .triggerCondition(r -> r.relicId.equals(Anchor.ID))
+                .setFailureTrigger(QuestTriggers.ACT_CHANGE)
                 .add(this);
         new TriggerTracker<>(QuestTriggers.OBTAIN_RELIC, 1)
                 .triggerCondition(r -> r.relicId.equals(HornCleat.ID))
@@ -207,6 +208,10 @@ public class BoatRepairQuest extends AbstractQuest implements MarkNodeQuest, Cus
                     room1 = AbstractDungeon.map.get(y).get(rng.random(AbstractDungeon.map.get(y).size() - 1));
                 }
                 room2 = findNewRoom(room1, room1, rng);
+                if(room2 == null) {
+                    Anniv8Mod.logger.warn("BoatRepairQuest couldn't find a new room, preventing crash");
+                    return;
+                }
                 room3 = findNewRoom(room1, room2, rng);
             }
             if(needAnchor) {
