@@ -148,7 +148,7 @@ public class QuestboundModPatch {
         }
     }
 
-    public static void initQuestboundCards(CardGroup copy) {
+    private static void initQuestboundCards(CardGroup copy) {
         getQuestbound().forEach(q -> {
             List<AbstractCard> overrides = q.overrideQuestboundCards();
             if (overrides != null) {
